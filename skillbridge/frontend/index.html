@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SkillBridge App</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Figtree:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+:root{
+  --ink:#18181B;
+  --muted:#71717A;
+  --border:#E4E4E7;
+  --bg:#FAFAFA;
+  --white:#FFFFFF;
+  --orange:#F97316;
+  --orange-soft:#FFF7ED;
+  --orange-mid:#FFEDD5;
+  --purple:#7C3AED;
+  --purple-soft:#F5F3FF;
+  --green:#16A34A;
+  --green-soft:#F0FDF4;
+  --red:#DC2626;
+  --red-soft:#FEF2F2;
+  --amber:#D97706;
+  --amber-soft:#FFFBEB;
+  --shadow:0 1px 3px rgba(0,0,0,.08),0 4px 16px rgba(0,0,0,.04);
+  --shadow-lg:0 4px 24px rgba(0,0,0,.10);
+}
+
+body{font-family:'Figtree',sans-serif;background:var(--bg);color:var(--ink);line-height:1.5;min-height:100vh}
+
+/* ── LAYOUT ── */
+.app{display:grid;grid-template-columns:240px 1fr;min-height:100vh}
+
+.sidebar{
+  background:var(--white);
+  border-right:1px solid var(--border);
+  padding:2rem 1.25rem;
+  display:flex;flex-direction:column;gap:.25rem;
+  position:sticky;top:0;height:100vh;overflow-y:auto;
+}
+
+.sidebar-logo{
+  font-family:'Syne',sans-serif;
+  font-size:1.5rem;font-weight:800;
+  color:var(--orange);
+  margin-bottom:2rem;padding-left:.5rem;
+}
+
+.nav-item{
+  display:flex;align-items:center;gap:.75rem;
+  padding:.6rem .75rem;border-radius:8px;
+  cursor:pointer;font-weight:500;color:var(--muted);
+  transition:all .15s;border:none;background:none;
+  width:100%;text-align:left;font-family:'Figtree',sans-serif;font-size:.95rem;
+}
+.nav-item:hover{background:var(--bg);color:var(--ink)}
+.nav-item.active{background:var(--orange-soft);color:var(--orange);font-weight:600}
+.nav-item .icon{font-size:1.1rem;width:20px;text-align:center}
+
+.sidebar-bottom{margin-top:auto;padding-top:1.5rem;border-top:1px solid var(--border)}
+.user-pill{display:flex;align-items:center;gap:.75rem;padding:.5rem .75rem;border-radius:8px;cursor:pointer}
+.user-pill:hover{background:var(--bg)}
+.user-avatar{width:36px;height:36px;border-radius:50%;background:var(--orange);color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;flex-shrink:0}
+.user-name{font-weight:600;font-size:.9rem}
+.user-role{font-size:.8rem;color:var(--muted)}
+
+.main{padding:2.5rem 3rem;overflow-y:auto}
+
+/* ── PAGE SYSTEM ── */
+.page{display:none}
+.page.active{display:block}
+
+/* ── TYPOGRAPHY ── */
+h1{font-family:'Syne',sans-serif;font-size:2rem;font-weight:700;letter-spacing:-.02em;margin-bottom:.375rem}
+h2{font-family:'Syne',sans-serif;font-size:1.25rem;font-weight:700;margin-bottom:1rem}
+h3{font-family:'Syne',sans-serif;font-size:1rem;font-weight:700}
+.page-sub{color:var(--muted);margin-bottom:2rem;font-size:.95rem}
+
+/* ── CARDS ── */
+.card{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:1.75rem;box-shadow:var(--shadow)}
+.card+.card{margin-top:1.5rem}
+.card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem}
+
+/* ── GRID ── */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:1.25rem}
+
+/* ── FORM ── */
+.form-group{margin-bottom:1.25rem}
+label{display:block;font-weight:600;font-size:.875rem;margin-bottom:.375rem;color:var(--ink)}
+.input,.textarea,.select{
+  width:100%;padding:.7rem 1rem;
+  border:1.5px solid var(--border);border-radius:8px;
+  font-family:'Figtree',sans-serif;font-size:.95rem;
+  background:var(--white);color:var(--ink);
+  transition:border-color .15s;
+}
+.input:focus,.textarea:focus,.select:focus{outline:none;border-color:var(--orange)}
+.textarea{resize:vertical;min-height:90px}
+
+/* ── BUTTONS ── */
+.btn{
+  display:inline-flex;align-items:center;gap:.5rem;
+  padding:.6rem 1.25rem;border-radius:8px;
+  font-family:'Figtree',sans-serif;font-size:.9rem;font-weight:600;
+  border:none;cursor:pointer;transition:all .15s;
+}
+.btn-primary{background:var(--orange);color:white}
+.btn-primary:hover{background:#EA6C0A;transform:translateY(-1px);box-shadow:0 4px 12px rgba(249,115,22,.3)}
+.btn-ghost{background:transparent;color:var(--ink);border:1.5px solid var(--border)}
+.btn-ghost:hover{background:var(--bg);border-color:var(--ink)}
+.btn-green{background:var(--green);color:white}
+.btn-green:hover{background:#15803D}
+.btn-red{background:var(--red);color:white}
+.btn-red:hover{background:#B91C1C}
+.btn-purple{background:var(--purple);color:white}
+.btn-sm{padding:.4rem .9rem;font-size:.83rem}
+.btn-row{display:flex;gap:.75rem;flex-wrap:wrap}
+
+/* ── TRUST BADGE ── */
+.trust-badge{
+  display:inline-flex;align-items:center;gap:.4rem;
+  padding:.3rem .8rem;border-radius:20px;
+  font-weight:700;font-size:.85rem;
+  background:var(--orange-soft);color:var(--orange);
+  border:1px solid var(--orange-mid);
+}
+.trust-badge.big{font-size:1.75rem;padding:.75rem 1.5rem;border-radius:14px}
+
+/* ── SKILL TAGS ── */
+.skill-tag{
+  display:inline-flex;align-items:center;gap:.4rem;
+  padding:.35rem .9rem;border-radius:20px;font-size:.83rem;font-weight:500;
+}
+.skill-offer{background:var(--orange-soft);color:var(--orange);border:1px solid var(--orange-mid)}
+.skill-learn{background:var(--purple-soft);color:var(--purple);border:1px solid #DDD6FE}
+.skill-tags{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.75rem}
+.skill-x{cursor:pointer;font-weight:700;opacity:.5;margin-left:.1rem}
+.skill-x:hover{opacity:1}
+
+/* ── STATUS BADGES ── */
+.status{display:inline-flex;align-items:center;padding:.25rem .75rem;border-radius:20px;font-size:.8rem;font-weight:600}
+.status-pending{background:var(--amber-soft);color:var(--amber)}
+.status-active{background:var(--green-soft);color:var(--green)}
+.status-completed{background:#F4F4F5;color:var(--muted)}
+.status-declined{background:var(--red-soft);color:var(--red)}
+
+/* ── STAT CARDS ── */
+.stat-card{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:1.25rem 1.5rem}
+.stat-val{font-family:'Syne',sans-serif;font-size:2.25rem;font-weight:800;color:var(--orange);line-height:1}
+.stat-lbl{color:var(--muted);font-size:.85rem;margin-top:.375rem}
+
+/* ── USER CARD (browse) ── */
+.user-card{background:var(--white);border:1.5px solid var(--border);border-radius:14px;padding:1.375rem;transition:all .2s}
+.user-card:hover{border-color:var(--orange);box-shadow:var(--shadow-lg);transform:translateY(-2px)}
+.uc-head{display:flex;align-items:center;gap:.875rem;margin-bottom:1rem}
+.uc-avatar{width:46px;height:46px;border-radius:50%;background:var(--purple);color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1rem;flex-shrink:0}
+.uc-name{font-weight:700;font-size:1rem}
+.uc-wants{font-size:.8rem;color:var(--muted);margin:.625rem 0 1rem}
+
+/* ── FILTER BUTTONS ── */
+.filters{display:flex;gap:.625rem;flex-wrap:wrap;margin-bottom:1.75rem}
+.filter{
+  padding:.45rem 1.1rem;border-radius:20px;
+  border:1.5px solid var(--border);background:var(--white);
+  cursor:pointer;font-family:'Figtree',sans-serif;font-size:.875rem;font-weight:500;
+  transition:all .15s;
+}
+.filter.on{background:var(--orange);color:white;border-color:var(--orange)}
+
+/* ── SEARCH ── */
+.search-wrap{position:relative;margin-bottom:1.5rem}
+.search-wrap input{padding-left:2.75rem}
+.search-icon{position:absolute;left:1rem;top:50%;transform:translateY(-50%);color:var(--muted)}
+
+/* ── TABS ── */
+.tabs{display:flex;border-bottom:2px solid var(--border);margin-bottom:1.75rem;gap:.25rem}
+.tab{
+  padding:.7rem 1.25rem;background:none;border:none;cursor:pointer;
+  font-family:'Figtree',sans-serif;font-size:.9rem;font-weight:600;color:var(--muted);
+  border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s;
+}
+.tab.on{color:var(--orange);border-bottom-color:var(--orange)}
+.tab-panel{display:none}
+.tab-panel.on{display:block}
+
+/* ── EXCHANGE CARDS ── */
+.ex-card{background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:1.25rem;margin-bottom:1rem;border-left:4px solid var(--border)}
+.ex-card.pending{border-left-color:var(--amber)}
+.ex-card.active{border-left-color:var(--green)}
+.ex-card.completed{border-left-color:var(--muted)}
+.ex-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.875rem}
+.ex-user{font-weight:700}
+.ex-time{font-size:.8rem;color:var(--muted);margin-top:.2rem}
+.ex-skills{background:var(--bg);border-radius:8px;padding:.875rem;margin:.875rem 0;font-size:.9rem;display:flex;flex-direction:column;gap:.4rem}
+
+/* ── MESSAGING ── */
+.msg-grid{display:grid;grid-template-columns:280px 1fr;background:var(--white);border:1px solid var(--border);border-radius:14px;overflow:hidden;height:580px}
+.conv-list{border-right:1px solid var(--border);overflow-y:auto}
+.conv-item{padding:1rem 1.125rem;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s}
+.conv-item:hover,.conv-item.on{background:var(--orange-soft)}
+.conv-name{font-weight:600;font-size:.9rem;margin-bottom:.25rem}
+.conv-prev{font-size:.8rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.conv-dot{width:8px;height:8px;border-radius:50%;background:var(--orange);display:inline-block;margin-right:.375rem}
+.chat-area{display:flex;flex-direction:column}
+.chat-hd{padding:1rem 1.25rem;border-bottom:1px solid var(--border);font-weight:700;font-size:.95rem}
+.chat-body{flex:1;padding:1.25rem;overflow-y:auto;display:flex;flex-direction:column;gap:.875rem}
+.msg{display:flex;flex-direction:column;max-width:68%}
+.msg.me{align-self:flex-end;align-items:flex-end}
+.bubble{padding:.65rem 1rem;border-radius:12px;background:var(--bg);font-size:.9rem;line-height:1.5}
+.msg.me .bubble{background:var(--orange);color:white}
+.msg-t{font-size:.75rem;color:var(--muted);margin-top:.25rem}
+.chat-ft{padding:.875rem 1.25rem;border-top:1px solid var(--border);display:flex;gap:.75rem}
+.chat-ft input{flex:1;padding:.65rem 1rem;border:1.5px solid var(--border);border-radius:8px;font-family:'Figtree',sans-serif}
+.chat-ft input:focus{outline:none;border-color:var(--orange)}
+
+/* ── STARS ── */
+.stars{display:flex;gap:.5rem;font-size:2.25rem;justify-content:center;margin:1.75rem 0;cursor:pointer}
+.star{color:#D4D4D8;transition:all .15s}
+.star.on{color:#F59E0B;transform:scale(1.1)}
+
+/* ── ADMIN TABLE ── */
+.table{width:100%;border-collapse:collapse;font-size:.9rem}
+.table th{background:var(--bg);padding:.875rem 1rem;text-align:left;font-weight:700;font-size:.8rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.table td{padding:.875rem 1rem;border-top:1px solid var(--border)}
+.table tr:hover td{background:var(--bg)}
+
+/* ── PROGRESS BAR ── */
+.prog-bar{height:8px;background:var(--border);border-radius:4px;overflow:hidden;margin-top:.5rem}
+.prog-fill{height:100%;background:var(--orange);border-radius:4px;transition:width .6s ease}
+
+/* ── DIVIDER ── */
+.divider{border:none;border-top:1px solid var(--border);margin:1.5rem 0}
+
+@media(max-width:900px){
+  .app{grid-template-columns:1fr}
+  .sidebar{display:none}
+  .main{padding:1.5rem}
+  .g2,.g3,.g4{grid-template-columns:1fr}
+  .msg-grid{grid-template-columns:1fr}
+  .conv-list{display:none}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ── SIDEBAR ── -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">SkillBridge</div>
+
+    <button class="nav-item active" onclick="go('pg-dashboard')">
+      <span class="icon">🏠</span> Dashboard
+    </button>
+    <button class="nav-item" onclick="go('pg-profile')">
+      <span class="icon">👤</span> My Profile
+    </button>
+    <button class="nav-item" onclick="go('pg-browse')">
+      <span class="icon">🔍</span> Browse Skills
+    </button>
+    <button class="nav-item" onclick="go('pg-exchanges')">
+      <span class="icon">🔄</span> Exchanges
+    </button>
+    <button class="nav-item" onclick="go('pg-messages')">
+      <span class="icon">💬</span> Messages
+    </button>
+    <button class="nav-item" onclick="go('pg-rating')">
+      <span class="icon">⭐</span> Rate Exchange
+    </button>
+    <button class="nav-item" onclick="go('pg-admin')" style="margin-top:1rem;border-top:1px solid var(--border);padding-top:1rem">
+      <span class="icon">🔒</span> Admin Panel
+    </button>
+
+    <div class="sidebar-bottom">
+      <div class="user-pill">
+        <div class="user-avatar">SM</div>
+        <div>
+          <div class="user-name">Sarah Martinez</div>
+          <div class="user-role">Trust Score: 94</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ── MAIN ── -->
+  <main class="main">
+
+    <!-- ══════════════════════════════════
+         PAGE 10: DASHBOARD / HOME
+    ══════════════════════════════════ -->
+    <div class="page active" id="pg-dashboard">
+      <h1>Dashboard</h1>
+      <p class="page-sub">Welcome back, Sarah. Here's your overview.</p>
+
+      <!-- Trust score hero -->
+      <div class="card" style="display:flex;align-items:center;gap:2rem;margin-bottom:1.5rem">
+        <div>
+          <div style="font-size:.875rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.5rem">Your Trust Score</div>
+          <div class="trust-badge big">⭐ 94 / 100</div>
+        </div>
+        <div style="width:1px;height:70px;background:var(--border)"></div>
+        <div style="flex:1">
+          <div style="font-size:.85rem;color:var(--muted);margin-bottom:.375rem">Score breakdown</div>
+          <div style="font-size:.85rem;margin-bottom:.5rem">Recency weight <strong>38pts</strong> · Reviewer trust <strong>40pts</strong> · Completion <strong>16pts</strong></div>
+          <div class="prog-bar"><div class="prog-fill" style="width:94%"></div></div>
+        </div>
+      </div>
+
+      <!-- Stats row -->
+      <div class="g4" style="margin-bottom:1.5rem">
+        <div class="stat-card">
+          <div class="stat-val">92%</div>
+          <div class="stat-lbl">Completion Rate</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val">22</div>
+          <div class="stat-lbl">Completed Exchanges</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val">3</div>
+          <div class="stat-lbl">Active Exchanges</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val">2</div>
+          <div class="stat-lbl">Pending Requests</div>
+        </div>
+      </div>
+
+      <!-- Quick links + recent activity -->
+      <div class="g2">
+        <div class="card">
+          <h2>Quick Actions</h2>
+          <div style="display:flex;flex-direction:column;gap:.75rem">
+            <button class="btn btn-primary" onclick="go('pg-browse')">🔍 Browse Skills</button>
+            <button class="btn btn-ghost" onclick="go('pg-messages')">💬 Go to Messages</button>
+            <button class="btn btn-ghost" onclick="go('pg-exchanges')">🔄 View Exchanges</button>
+          </div>
+        </div>
+        <div class="card">
+          <h2>Recent Activity</h2>
+          <div style="display:flex;flex-direction:column;gap:.75rem">
+            <div style="display:flex;align-items:start;gap:.75rem;padding:.875rem;background:var(--bg);border-radius:8px">
+              <span style="font-size:1.1rem">📩</span>
+              <div>
+                <div style="font-weight:600;font-size:.9rem">New request from James Chen</div>
+                <div style="font-size:.8rem;color:var(--muted)">Wants: Python · Offers: Guitar · 2 hours ago</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:start;gap:.75rem;padding:.875rem;background:var(--bg);border-radius:8px">
+              <span style="font-size:1.1rem">✅</span>
+              <div>
+                <div style="font-weight:600;font-size:.9rem">Exchange completed with Lisa Cooper</div>
+                <div style="font-size:.8rem;color:var(--muted)">Japanese ⇄ Python · 1 day ago</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:start;gap:.75rem;padding:.875rem;background:var(--bg);border-radius:8px">
+              <span style="font-size:1.1rem">💬</span>
+              <div>
+                <div style="font-weight:600;font-size:.9rem">New message from Marcus Patel</div>
+                <div style="font-size:.8rem;color:var(--muted)">Design exchange · 2 days ago</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         PAGE 3: USER PROFILE
+    ══════════════════════════════════ -->
+    <div class="page" id="pg-profile">
+      <h1>My Profile</h1>
+      <p class="page-sub">Manage your skills and how others see you.</p>
+
+      <div class="card" style="margin-bottom:1.5rem">
+        <!-- Header row -->
+        <div style="display:flex;align-items:center;gap:1.5rem;margin-bottom:1.75rem;flex-wrap:wrap">
+          <div style="width:72px;height:72px;border-radius:50%;background:var(--orange);color:white;display:flex;align-items:center;justify-content:center;font-size:1.75rem;font-weight:700;flex-shrink:0">SM</div>
+          <div style="flex:1">
+            <div style="font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:700">Sarah Martinez</div>
+            <div style="color:var(--muted);font-size:.9rem;margin:.25rem 0">Member since Oct 2025 · 24 exchanges</div>
+            <div class="trust-badge" style="margin-top:.375rem">⭐ 94 / 100 Trust Score</div>
+          </div>
+          <button class="btn btn-ghost" onclick="toggleEdit()">✏️ Edit Profile</button>
+        </div>
+
+        <!-- Bio -->
+        <div class="form-group">
+          <label>About Me</label>
+          <textarea class="textarea" id="bio-text" readonly style="border-color:transparent;background:var(--bg);cursor:default">Software engineer passionate about teaching Python and web development. Love learning new languages and musical instruments in my free time!</textarea>
+        </div>
+      </div>
+
+      <!-- Skills columns -->
+      <div class="g2">
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+            <h2 style="margin:0">Skills I Offer</h2>
+            <button class="btn btn-primary btn-sm" onclick="addSkill('offer')">+ Add</button>
+          </div>
+          <div class="skill-tags" id="offer-tags">
+            <span class="skill-tag skill-offer">Python <span class="skill-x" onclick="removeTag(this)">×</span></span>
+            <span class="skill-tag skill-offer">Web Dev <span class="skill-x" onclick="removeTag(this)">×</span></span>
+            <span class="skill-tag skill-offer">Data Analysis <span class="skill-x" onclick="removeTag(this)">×</span></span>
+          </div>
+        </div>
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+            <h2 style="margin:0">Skills I Want to Learn</h2>
+            <button class="btn btn-purple btn-sm" onclick="addSkill('learn')">+ Add</button>
+          </div>
+          <div class="skill-tags" id="learn-tags">
+            <span class="skill-tag skill-learn">Guitar <span class="skill-x" onclick="removeTag(this)">×</span></span>
+            <span class="skill-tag skill-learn">Spanish <span class="skill-x" onclick="removeTag(this)">×</span></span>
+            <span class="skill-tag skill-learn">Photography <span class="skill-x" onclick="removeTag(this)">×</span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         PAGE 4: BROWSE / SEARCH
+    ══════════════════════════════════ -->
+    <div class="page" id="pg-browse">
+      <h1>Browse Skills</h1>
+      <p class="page-sub">Find someone to exchange skills with.</p>
+
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input class="input" placeholder="Search for a skill..." oninput="filterCards(this.value)">
+      </div>
+
+      <div class="filters">
+        <button class="filter on" onclick="setFilter(this,'All')">All</button>
+        <button class="filter" onclick="setFilter(this,'Coding')">Coding</button>
+        <button class="filter" onclick="setFilter(this,'Design')">Design</button>
+        <button class="filter" onclick="setFilter(this,'Language')">Language</button>
+        <button class="filter" onclick="setFilter(this,'Music')">Music</button>
+      </div>
+
+      <div class="g3" id="cards-grid">
+        <div class="user-card" data-cat="Coding">
+          <div class="uc-head">
+            <div class="uc-avatar" style="background:#7C3AED">JC</div>
+            <div>
+              <div class="uc-name">James Chen</div>
+              <div class="trust-badge" style="font-size:.78rem;padding:.2rem .65rem;margin-top:.25rem">⭐ 88</div>
+            </div>
+          </div>
+          <div class="skill-tags">
+            <span class="skill-tag skill-offer">Guitar</span>
+            <span class="skill-tag skill-offer">Music Theory</span>
+          </div>
+          <div class="uc-wants">Wants to learn: Web Dev, React</div>
+          <button class="btn btn-primary btn-sm" style="width:100%" onclick="go('pg-request')">View Profile</button>
+        </div>
+
+        <div class="user-card" data-cat="Language">
+          <div class="uc-head">
+            <div class="uc-avatar" style="background:#059669">AR</div>
+            <div>
+              <div class="uc-name">Ana Rodriguez</div>
+              <div class="trust-badge" style="font-size:.78rem;padding:.2rem .65rem;margin-top:.25rem">⭐ 96</div>
+            </div>
+          </div>
+          <div class="skill-tags">
+            <span class="skill-tag skill-offer">Spanish</span>
+            <span class="skill-tag skill-offer">French</span>
+          </div>
+          <div class="uc-wants">Wants to learn: Graphic Design</div>
+          <button class="btn btn-primary btn-sm" style="width:100%" onclick="go('pg-request')">View Profile</button>
+        </div>
+
+        <div class="user-card" data-cat="Design">
+          <div class="uc-head">
+            <div class="uc-avatar" style="background:#DC2626">MP</div>
+            <div>
+              <div class="uc-name">Marcus Patel</div>
+              <div class="trust-badge" style="font-size:.78rem;padding:.2rem .65rem;margin-top:.25rem">⭐ 91</div>
+            </div>
+          </div>
+          <div class="skill-tags">
+            <span class="skill-tag skill-offer">Graphic Design</span>
+            <span class="skill-tag skill-offer">UI/UX</span>
+          </div>
+          <div class="uc-wants">Wants to learn: Photography</div>
+          <button class="btn btn-primary btn-sm" style="width:100%" onclick="go('pg-request')">View Profile</button>
+        </div>
+
+        <div class="user-card" data-cat="Design">
+          <div class="uc-head">
+            <div class="uc-avatar" style="background:#D97706">EW</div>
+            <div>
+              <div class="uc-name">Emma Wilson</div>
+              <div class="trust-badge" style="font-size:.78rem;padding:.2rem .65rem;margin-top:.25rem">⭐ 89</div>
+            </div>
+          </div>
+          <div class="skill-tags">
+            <span class="skill-tag skill-offer">Photography</span>
+            <span class="skill-tag skill-offer">Lightroom</span>
+          </div>
+          <div class="uc-wants">Wants to learn: Python, Data Science</div>
+          <button class="btn btn-primary btn-sm" style="width:100%" onclick="go('pg-request')">View Profile</button>
+        </div>
+
+        <div class="user-card" data-cat="Music">
+          <div class="uc-head">
+            <div class="uc-avatar" style="background:#0891B2">DK</div>
+            <div>
+              <div class="uc-name">David Kim</div>
+              <div class="trust-badge" style="font-size:.78rem;padding:.2rem .65rem;margin-top:.25rem">⭐ 93</div>
+            </div>
+          </div>
+          <div class="skill-tags">
+            <span class="skill-tag skill-offer">Piano</span>
+            <span class="skill-tag skill-offer">Music Production</span>
+          </div>
+          <div class="uc-wants">Wants to learn: German, Italian</div>
+          <button class="btn btn-primary btn-sm" style="width:100%" onclick="go('pg-request')">View Profile</button>
+        </div>
+
+        <div class="user-card" data-cat="Coding">
+          <div class="uc-head">
+            <div class="uc-avatar" style="background:#7C3AED">LC</div>
+            <div>
+              <div class="uc-name">Lisa Cooper</div>
+              <div class="trust-badge" style="font-size:.78rem;padding:.2rem .65rem;margin-top:.25rem">⭐ 87</div>
+            </div>
+          </div>
+          <div class="skill-tags">
+            <span class="skill-tag skill-offer">Japanese</span>
+            <span class="skill-tag skill-offer">Korean</span>
+          </div>
+          <div class="uc-wants">Wants to learn: Cooking, Baking</div>
+          <button class="btn btn-primary btn-sm" style="width:100%" onclick="go('pg-request')">View Profile</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         PAGE 6: EXCHANGE REQUEST
+    ══════════════════════════════════ -->
+    <div class="page" id="pg-request">
+      <h1>Send Exchange Request</h1>
+      <p class="page-sub">You're requesting a skill exchange with James Chen.</p>
+
+      <div style="max-width:560px">
+        <div class="card" style="display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem">
+          <div style="width:52px;height:52px;border-radius:50%;background:#7C3AED;color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.1rem;flex-shrink:0">JC</div>
+          <div>
+            <div style="font-weight:700;font-size:1rem">James Chen</div>
+            <div style="font-size:.85rem;color:var(--muted)">Guitar · Music Theory</div>
+          </div>
+          <div class="trust-badge" style="margin-left:auto">⭐ 88</div>
+        </div>
+
+        <div class="card">
+          <div class="form-group">
+            <label>Skill You Want from Them</label>
+            <select class="select">
+              <option value="">Choose a skill...</option>
+              <option>Guitar Lessons</option>
+              <option>Music Theory</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Skill You Will Offer in Return</label>
+            <select class="select">
+              <option value="">Choose a skill...</option>
+              <option>Python Programming</option>
+              <option>Web Development</option>
+              <option>Data Analysis</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Message <span style="font-weight:400;color:var(--muted)">(Optional)</span></label>
+            <textarea class="textarea" placeholder="Hi James! I'd love to learn guitar from you. I can help you build a personal website in return..."></textarea>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn btn-primary" onclick="alert('Request sent!');go('pg-exchanges')">Send Request</button>
+            <button class="btn btn-ghost" onclick="go('pg-browse')">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         PAGE 7: EXCHANGE DASHBOARD
+    ══════════════════════════════════ -->
+    <div class="page" id="pg-exchanges">
+      <h1>My Exchanges</h1>
+      <p class="page-sub">Track all your skill exchange requests and sessions.</p>
+
+      <div class="card">
+        <div class="tabs">
+          <button class="tab on" onclick="switchTab(this,'t-received')">📩 Received</button>
+          <button class="tab" onclick="switchTab(this,'t-sent')">📤 Sent</button>
+          <button class="tab" onclick="switchTab(this,'t-active')">🔄 Active</button>
+          <button class="tab" onclick="switchTab(this,'t-done')">✅ Completed</button>
+        </div>
+
+        <!-- Received -->
+        <div class="tab-panel on" id="t-received">
+          <div class="ex-card pending">
+            <div class="ex-head">
+              <div>
+                <div class="ex-user">James Chen</div>
+                <div class="ex-time">2 hours ago</div>
+              </div>
+              <span class="status status-pending">Pending</span>
+            </div>
+            <div class="ex-skills">
+              <div>🎯 <strong>They want:</strong> Python Programming</div>
+              <div>🎁 <strong>They offer:</strong> Guitar Lessons</div>
+            </div>
+            <div class="btn-row">
+              <button class="btn btn-green btn-sm">✓ Accept</button>
+              <button class="btn btn-red btn-sm">✗ Decline</button>
+            </div>
+          </div>
+
+          <div class="ex-card pending">
+            <div class="ex-head">
+              <div>
+                <div class="ex-user">Emma Wilson</div>
+                <div class="ex-time">1 day ago</div>
+              </div>
+              <span class="status status-pending">Pending</span>
+            </div>
+            <div class="ex-skills">
+              <div>🎯 <strong>They want:</strong> Data Analysis</div>
+              <div>🎁 <strong>They offer:</strong> Photography</div>
+            </div>
+            <div class="btn-row">
+              <button class="btn btn-green btn-sm">✓ Accept</button>
+              <button class="btn btn-red btn-sm">✗ Decline</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sent -->
+        <div class="tab-panel" id="t-sent">
+          <div class="ex-card pending">
+            <div class="ex-head">
+              <div>
+                <div class="ex-user">Ana Rodriguez</div>
+                <div class="ex-time">3 days ago</div>
+              </div>
+              <span class="status status-pending">Pending</span>
+            </div>
+            <div class="ex-skills">
+              <div>🎯 <strong>You want:</strong> Spanish Language</div>
+              <div>🎁 <strong>You offer:</strong> Web Development</div>
+            </div>
+            <p style="font-size:.85rem;color:var(--muted);margin-top:.5rem">⏳ Waiting for Ana to respond...</p>
+          </div>
+        </div>
+
+        <!-- Active -->
+        <div class="tab-panel" id="t-active">
+          <div class="ex-card active">
+            <div class="ex-head">
+              <div>
+                <div class="ex-user">Marcus Patel</div>
+                <div class="ex-time">Started 1 week ago</div>
+              </div>
+              <span class="status status-active">Active</span>
+            </div>
+            <div class="ex-skills">
+              <div>📖 <strong>Learning:</strong> Graphic Design</div>
+              <div>🎓 <strong>Teaching:</strong> Python</div>
+            </div>
+            <div class="btn-row">
+              <button class="btn btn-ghost btn-sm" onclick="go('pg-messages')">💬 Message</button>
+              <button class="btn btn-green btn-sm" onclick="alert('Marked complete!');go('pg-rating')">✓ Mark Complete</button>
+            </div>
+          </div>
+
+          <div class="ex-card active">
+            <div class="ex-head">
+              <div>
+                <div class="ex-user">David Kim</div>
+                <div class="ex-time">Started 2 weeks ago</div>
+              </div>
+              <span class="status status-active">Active</span>
+            </div>
+            <div class="ex-skills">
+              <div>📖 <strong>Learning:</strong> Piano</div>
+              <div>🎓 <strong>Teaching:</strong> Web Development</div>
+            </div>
+            <div class="btn-row">
+              <button class="btn btn-ghost btn-sm" onclick="go('pg-messages')">💬 Message</button>
+              <button class="btn btn-green btn-sm" onclick="alert('Marked complete!');go('pg-rating')">✓ Mark Complete</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Completed -->
+        <div class="tab-panel" id="t-done">
+          <div class="ex-card completed">
+            <div class="ex-head">
+              <div>
+                <div class="ex-user">Lisa Cooper</div>
+                <div class="ex-time">Completed 1 month ago</div>
+              </div>
+              <span class="status status-completed">Completed</span>
+            </div>
+            <div class="ex-skills">
+              <div>📖 <strong>Learned:</strong> Japanese Basics</div>
+              <div>🎓 <strong>Taught:</strong> Python</div>
+            </div>
+            <div style="margin-top:.75rem;font-size:.85rem;color:#F59E0B">★★★★★ Rated 5/5</div>
+          </div>
+
+          <div class="ex-card completed">
+            <div class="ex-head">
+              <div>
+                <div class="ex-user">Tom Harris</div>
+                <div class="ex-time">Completed 2 months ago</div>
+              </div>
+              <span class="status status-completed">Completed</span>
+            </div>
+            <div class="ex-skills">
+              <div>📖 <strong>Learned:</strong> Video Editing</div>
+              <div>🎓 <strong>Taught:</strong> Data Analysis</div>
+            </div>
+            <div style="margin-top:.75rem;font-size:.85rem;color:#F59E0B">★★★★☆ Rated 4/5</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         PAGE 8: MESSAGING
+    ══════════════════════════════════ -->
+    <div class="page" id="pg-messages">
+      <h1>Messages</h1>
+      <p class="page-sub">Chat with your exchange partners.</p>
+
+      <div class="msg-grid">
+        <div class="conv-list">
+          <div class="conv-item on">
+            <div class="conv-name"><span class="conv-dot"></span>Marcus Patel</div>
+            <div class="conv-prev">Great session yesterday!</div>
+          </div>
+          <div class="conv-item">
+            <div class="conv-name">James Chen</div>
+            <div class="conv-prev">Looking forward to guitar...</div>
+          </div>
+          <div class="conv-item">
+            <div class="conv-name">Ana Rodriguez</div>
+            <div class="conv-prev">Hola! Ready for Spanish?</div>
+          </div>
+          <div class="conv-item">
+            <div class="conv-name">David Kim</div>
+            <div class="conv-prev">Thanks for the web dev help</div>
+          </div>
+        </div>
+
+        <div class="chat-area">
+          <div class="chat-hd">Marcus Patel · Graphic Design Exchange</div>
+
+          <div class="chat-body">
+            <div class="msg">
+              <div class="bubble">Hey! Ready for our next design session on Tuesday?</div>
+              <div class="msg-t">Marcus · 10:30 AM</div>
+            </div>
+            <div class="msg me">
+              <div class="bubble">Yes! I've been practicing the colour theory stuff you showed me.</div>
+              <div class="msg-t">You · 10:32 AM</div>
+            </div>
+            <div class="msg">
+              <div class="bubble">That's great! Let's also go over typography. Bring some design examples you like.</div>
+              <div class="msg-t">Marcus · 10:35 AM</div>
+            </div>
+            <div class="msg me">
+              <div class="bubble">Perfect! See you Tuesday at 3pm 🎨</div>
+              <div class="msg-t">You · 10:37 AM</div>
+            </div>
+          </div>
+
+          <div class="chat-ft">
+            <input type="text" placeholder="Type a message..." id="chat-input">
+            <button class="btn btn-primary btn-sm" onclick="sendMsg()">Send</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         PAGE 9: RATING
+    ══════════════════════════════════ -->
+    <div class="page" id="pg-rating">
+      <h1>Rate Your Exchange</h1>
+      <p class="page-sub">Your honest feedback helps build trust in the community.</p>
+
+      <div style="max-width:500px">
+        <div class="card">
+          <!-- Who you're rating -->
+          <div style="display:flex;align-items:center;gap:1rem;padding:1rem;background:var(--bg);border-radius:10px;margin-bottom:1.5rem">
+            <div style="width:52px;height:52px;border-radius:50%;background:var(--orange);color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.1rem">MP</div>
+            <div>
+              <div style="font-weight:700">Marcus Patel</div>
+              <div style="font-size:.85rem;color:var(--muted)">Graphic Design · 3-week exchange</div>
+            </div>
+          </div>
+
+          <p style="text-align:center;font-weight:600;color:var(--muted)">How was your exchange with Marcus Patel?</p>
+
+          <div class="stars" id="stars">
+            <span class="star" onclick="rate(1)">★</span>
+            <span class="star" onclick="rate(2)">★</span>
+            <span class="star" onclick="rate(3)">★</span>
+            <span class="star" onclick="rate(4)">★</span>
+            <span class="star" onclick="rate(5)">★</span>
+          </div>
+          <p style="text-align:center;color:var(--muted);font-size:.85rem;margin-top:-.75rem;margin-bottom:1.5rem" id="rating-label">Tap a star to rate</p>
+
+          <div class="form-group">
+            <label>Comment <span style="font-weight:400;color:var(--muted)">(Optional)</span></label>
+            <textarea class="textarea" placeholder="Share what worked well or what could be improved..."></textarea>
+          </div>
+
+          <button class="btn btn-primary" style="width:100%" onclick="submitRating()">Submit Rating</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         ADMIN PAGE
+    ══════════════════════════════════ -->
+    <div class="page" id="pg-admin">
+      <div style="display:flex;align-items:center;gap:1rem;margin-bottom:.375rem">
+        <h1 style="margin-bottom:0">Admin Panel</h1>
+        <span class="status status-declined" style="font-size:.75rem">🔒 Researcher Only</span>
+      </div>
+      <p class="page-sub">Monitor all exchanges and export data for your research analysis.</p>
+
+      <!-- Top stats -->
+      <div class="g4" style="margin-bottom:1.5rem">
+        <div class="stat-card">
+          <div class="stat-val">248</div>
+          <div class="stat-lbl">Total Users</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val">702</div>
+          <div class="stat-lbl">Total Exchanges</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val">512</div>
+          <div class="stat-lbl">Completed</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val">18</div>
+          <div class="stat-lbl">Abandoned</div>
+        </div>
+      </div>
+
+      <!-- Exchange breakdown -->
+      <div class="card" style="margin-bottom:1.5rem">
+        <h2>Exchange Status Breakdown</h2>
+        <div class="g4">
+          <div style="text-align:center;padding:1rem;background:var(--amber-soft);border-radius:10px">
+            <div style="font-size:1.75rem;font-weight:800;color:var(--amber)">34</div>
+            <div style="font-size:.85rem;color:var(--muted);margin-top:.25rem">Pending</div>
+          </div>
+          <div style="text-align:center;padding:1rem;background:var(--green-soft);border-radius:10px">
+            <div style="font-size:1.75rem;font-weight:800;color:var(--green)">138</div>
+            <div style="font-size:.85rem;color:var(--muted);margin-top:.25rem">Active</div>
+          </div>
+          <div style="text-align:center;padding:1rem;background:var(--bg);border-radius:10px;border:1px solid var(--border)">
+            <div style="font-size:1.75rem;font-weight:800;color:var(--muted)">512</div>
+            <div style="font-size:.85rem;color:var(--muted);margin-top:.25rem">Completed</div>
+          </div>
+          <div style="text-align:center;padding:1rem;background:var(--red-soft);border-radius:10px">
+            <div style="font-size:1.75rem;font-weight:800;color:var(--red)">18</div>
+            <div style="font-size:.85rem;color:var(--muted);margin-top:.25rem">Abandoned</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Group comparison -->
+      <div class="g2" style="margin-bottom:1.5rem">
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:1rem">
+            <div>
+              <h2 style="margin-bottom:.25rem">Group A</h2>
+              <div style="font-size:.85rem;color:var(--muted)">Simple Star Ratings · 124 users</div>
+            </div>
+            <span class="status status-pending">Control</span>
+          </div>
+          <div style="font-family:'Syne',sans-serif;font-size:2.5rem;font-weight:800;color:var(--orange)">88%</div>
+          <div style="font-size:.85rem;color:var(--muted);margin:.25rem 0 .5rem">Completion Rate</div>
+          <div class="prog-bar"><div class="prog-fill" style="width:88%"></div></div>
+          <div style="margin-top:1rem;font-size:.85rem;color:var(--muted)">Avg trust score: <strong>82/100</strong></div>
+        </div>
+
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:1rem">
+            <div>
+              <h2 style="margin-bottom:.25rem">Group B</h2>
+              <div style="font-size:.85rem;color:var(--muted)">Weighted Trust Score · 124 users</div>
+            </div>
+            <span class="status status-active">Treatment</span>
+          </div>
+          <div style="font-family:'Syne',sans-serif;font-size:2.5rem;font-weight:800;color:var(--green)">92%</div>
+          <div style="font-size:.85rem;color:var(--muted);margin:.25rem 0 .5rem">Completion Rate</div>
+          <div class="prog-bar"><div class="prog-fill" style="width:92%;background:var(--green)"></div></div>
+          <div style="margin-top:1rem;font-size:.85rem;color:var(--muted)">Avg trust score: <strong>89/100</strong></div>
+        </div>
+      </div>
+
+      <!-- Export + recent exchanges table -->
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem">
+          <h2 style="margin:0">Recent Exchanges</h2>
+          <button class="btn btn-primary" onclick="exportCSV()">⬇ Export CSV</button>
+        </div>
+
+        <div style="overflow-x:auto">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>User A</th>
+                <th>User B</th>
+                <th>Skills</th>
+                <th>Status</th>
+                <th>Group</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Sarah Martinez</strong></td>
+                <td>Marcus Patel</td>
+                <td>Python ⇄ Design</td>
+                <td><span class="status status-active">Active</span></td>
+                <td>B</td>
+                <td>Apr 20, 2026</td>
+              </tr>
+              <tr>
+                <td><strong>James Chen</strong></td>
+                <td>Emma Wilson</td>
+                <td>Guitar ⇄ Photo</td>
+                <td><span class="status status-pending">Pending</span></td>
+                <td>A</td>
+                <td>Apr 25, 2026</td>
+              </tr>
+              <tr>
+                <td><strong>Ana Rodriguez</strong></td>
+                <td>David Kim</td>
+                <td>Spanish ⇄ Piano</td>
+                <td><span class="status status-completed">Completed</span></td>
+                <td>B</td>
+                <td>Apr 15, 2026</td>
+              </tr>
+              <tr>
+                <td><strong>Lisa Cooper</strong></td>
+                <td>Tom Harris</td>
+                <td>Japanese ⇄ Video</td>
+                <td><span class="status status-completed">Completed</span></td>
+                <td>A</td>
+                <td>Apr 10, 2026</td>
+              </tr>
+              <tr>
+                <td><strong>Mike Johnson</strong></td>
+                <td>Sophie Lee</td>
+                <td>Coding ⇄ Writing</td>
+                <td><span class="status status-declined">Declined</span></td>
+                <td>B</td>
+                <td>Apr 22, 2026</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+// Navigation
+function go(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  const map={'pg-dashboard':'Dashboard','pg-profile':'My Profile','pg-browse':'Browse Skills','pg-exchanges':'Exchanges','pg-messages':'Messages','pg-rating':'Rate Exchange','pg-admin':'Admin Panel'};
+  document.querySelectorAll('.nav-item').forEach(n=>{if(n.textContent.trim()===map[id])n.classList.add('active')});
+  window.scrollTo(0,0);
+}
+
+// Tabs
+function switchTab(btn,panelId){
+  const parent=btn.closest('.card');
+  parent.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  parent.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('on'));
+  btn.classList.add('on');
+  document.getElementById(panelId).classList.add('on');
+}
+
+// Filter buttons
+function setFilter(btn,cat){
+  document.querySelectorAll('.filter').forEach(f=>f.classList.remove('on'));
+  btn.classList.add('on');
+  document.querySelectorAll('#cards-grid .user-card').forEach(c=>{
+    c.style.display=(cat==='All'||c.dataset.cat===cat)?'block':'none';
+  });
+}
+
+// Search
+function filterCards(q){
+  document.querySelectorAll('#cards-grid .user-card').forEach(c=>{
+    c.style.display=c.textContent.toLowerCase().includes(q.toLowerCase())?'block':'none';
+  });
+}
+
+// Add skill tag
+function addSkill(type){
+  const name=prompt(`Enter skill name:`);
+  if(!name||!name.trim())return;
+  const tag=document.createElement('span');
+  tag.className='skill-tag '+(type==='offer'?'skill-offer':'skill-learn');
+  tag.innerHTML=name.trim()+' <span class="skill-x" onclick="removeTag(this)">×</span>';
+  document.getElementById(type+'-tags').appendChild(tag);
+}
+
+function removeTag(x){x.parentElement.remove()}
+
+// Toggle bio edit
+function toggleEdit(){
+  const bio=document.getElementById('bio-text');
+  const isReadonly=bio.hasAttribute('readonly');
+  if(isReadonly){
+    bio.removeAttribute('readonly');
+    bio.style.background='var(--white)';
+    bio.style.borderColor='var(--border)';
+    bio.style.cursor='text';
+    bio.focus();
+    event.target.textContent='💾 Save Profile';
+  } else {
+    bio.setAttribute('readonly','');
+    bio.style.background='var(--bg)';
+    bio.style.borderColor='transparent';
+    bio.style.cursor='default';
+    event.target.textContent='✏️ Edit Profile';
+    alert('Profile saved!');
+  }
+}
+
+// Star rating
+let currentRating=0;
+const labels=['','Poor','Fair','Good','Great','Excellent!'];
+function rate(n){
+  currentRating=n;
+  document.querySelectorAll('.star').forEach((s,i)=>s.classList.toggle('on',i<n));
+  document.getElementById('rating-label').textContent=labels[n]+' ('+n+'/5)';
+}
+
+function submitRating(){
+  if(!currentRating){alert('Please select a rating');return;}
+  alert('Rating submitted! Thank you.');
+  go('pg-exchanges');
+}
+
+// Send chat message
+function sendMsg(){
+  const input=document.getElementById('chat-input');
+  if(!input.value.trim())return;
+  const body=document.querySelector('.chat-body');
+  const msg=document.createElement('div');
+  msg.className='msg me';
+  msg.innerHTML=`<div class="bubble">${input.value}</div><div class="msg-t">You · Just now</div>`;
+  body.appendChild(msg);
+  body.scrollTop=body.scrollHeight;
+  input.value='';
+}
+
+document.getElementById('chat-input').addEventListener('keydown',e=>{if(e.key==='Enter')sendMsg()});
+
+// Export CSV (mock)
+function exportCSV(){
+  const csv=`User A,User B,Skills,Status,Group,Date
+Sarah Martinez,Marcus Patel,Python <> Design,Active,B,Apr 20 2026
+James Chen,Emma Wilson,Guitar <> Photo,Pending,A,Apr 25 2026
+Ana Rodriguez,David Kim,Spanish <> Piano,Completed,B,Apr 15 2026
+Lisa Cooper,Tom Harris,Japanese <> Video,Completed,A,Apr 10 2026
+Mike Johnson,Sophie Lee,Coding <> Writing,Declined,B,Apr 22 2026`;
+  const blob=new Blob([csv],{type:'text/csv'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='skillbridge_data.csv';
+  a.click();
+}
+</script>
+</body>
+</html>
