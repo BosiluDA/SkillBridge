@@ -15,7 +15,7 @@ function Profile() {
     const fetchProfile = async () => {
       try {
         const res = await API.get('/auth/me');
-        const u = res.data;
+        const u = res.data.user || res.data;
         setForm({
           name: u.name || '',
           bio: u.bio || '',
@@ -45,7 +45,8 @@ function Profile() {
         skillsWanted: form.skillsWanted.split(',').map(s => s.trim()).filter(Boolean),
       };
       const res = await API.put('/users/profile', payload);
-      localStorage.setItem('user', JSON.stringify(res.data));
+      const updatedUser = res.data.user || res.data;
+      localStorage.setItem('user', JSON.stringify(updatedUser));
       setMessage('Profile updated successfully!');
     } catch (err) {
       setError(err.response?.data?.message || 'Update failed');
