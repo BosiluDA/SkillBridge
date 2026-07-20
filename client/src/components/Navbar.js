@@ -4,6 +4,7 @@ import '../App.css';
 
 function Navbar() {
   const navigate = useNavigate();
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
 
   const logout = () => {
     localStorage.removeItem('token');
@@ -20,6 +21,9 @@ function Navbar() {
         <li><span className="link" style={{color:'white'}} onClick={() => navigate('/exchanges')}>Exchanges</span></li>
         <li><span className="link" style={{color:'white'}} onClick={() => navigate('/messages')}>Messages</span></li>
         <li><span className="link" style={{color:'white'}} onClick={() => navigate('/profile')}>Profile</span></li>
+        {user.isAdmin && (
+          <li><span className="link" style={{color:'#FFC107'}} onClick={() => navigate('/admin')}>Admin</span></li>
+        )}
         <li><span className="link" style={{color:'#FF6B35'}} onClick={logout}>Logout</span></li>
       </ul>
     </nav>

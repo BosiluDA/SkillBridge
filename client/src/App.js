@@ -9,6 +9,7 @@ import Browse from './pages/Browse';
 import Exchanges from './pages/Exchanges';
 import Messages from './pages/Messages';
 import Rating from './pages/Rating';
+import Admin from './pages/Admin';
 
 const PrivateRoute = ({ children }) => {
   const token = localStorage.getItem('token');
@@ -28,6 +29,7 @@ function App() {
         <Route path="/exchanges" element={<PrivateRoute><Exchanges /></PrivateRoute>} />
         <Route path="/messages" element={<PrivateRoute><Messages /></PrivateRoute>} />
         <Route path="/rating" element={<PrivateRoute><Rating /></PrivateRoute>} />
+        <Route path="/admin" element={<PrivateRoute><Admin /></PrivateRoute>} />
       </Routes>
     </Router>
   );
