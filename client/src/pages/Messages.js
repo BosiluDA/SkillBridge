@@ -31,7 +31,7 @@ function Messages() {
   const fetchExchanges = async () => {
     try {
       const res = await API.get('/exchanges');
-      const data = Array.isArray(res.data) ? res.data : [];
+      const data = Array.isArray(res.data) ? res.data : (res.data.exchanges || []);
       setExchanges(data.filter(e => e.status === 'accepted' || e.status === 'completed'));
     } catch (err) {}
   };
@@ -40,7 +40,7 @@ function Messages() {
     setSelectedExchange(ex);
     try {
       const res = await API.get(`/messages/${ex._id}`);
-      setMessages(Array.isArray(res.data) ? res.data : []);
+      setMessages(Array.isArray(res.data) ? res.data : (res.data.messages || []));
     } catch (err) {}
   };
 
@@ -54,14 +54,14 @@ function Messages() {
       });
       setNewMsg('');
       const res = await API.get(`/messages/${selectedExchange._id}`);
-      setMessages(Array.isArray(res.data) ? res.data : []);
+      setMessages(Array.isArray(res.data) ? res.data : (res.data.messages || []));
     } catch (err) {
       setError('Failed to send message');
     }
   };
 
   const getOtherUser = (ex) => {
-    return ex.requester?._id === currentUser._id ? ex.receiver : ex.requester;
+    return ex.sender?._id === currentUser._id ? ex.receiver : ex.sender;
   };
 
   return (
