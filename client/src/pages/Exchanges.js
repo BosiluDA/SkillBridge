@@ -16,7 +16,8 @@ function Exchanges() {
   const fetchExchanges = async () => {
     try {
       const res = await API.get('/exchanges');
-      setExchanges(Array.isArray(res.data) ? res.data : []);
+      const data = Array.isArray(res.data) ? res.data : (res.data.exchanges || []);
+      setExchanges(data);
     } catch (err) {
       setError('Failed to load exchanges');
     } finally {
@@ -38,7 +39,7 @@ function Exchanges() {
       pending: 'badge-primary',
       accepted: 'badge-success',
       completed: 'badge-accent',
-      rejected: 'badge-danger'
+      declined: 'badge-danger'
     };
     return map[status] || 'badge-primary';
   };
@@ -65,14 +66,17 @@ function Exchanges() {
         ) : (
           <div style={{ marginTop: '1.5rem' }}>
             {exchanges.map(ex => {
-              const isRequester = ex.requester?._id === currentUser._id;
-              const otherUser = isRequester ? ex.receiver : ex.requester;
+              const isSender = ex.sender?._id === currentUser._id;
+              const otherUser = isSender ? ex.receiver : ex.sender;
               return (
                 <div key={ex._id} className="card">
                   <div className="flex-between">
                     <div>
-                      <h3>{isRequester ? `You → ${otherUser?.name}` : `${otherUser?.name} → You`}</h3>
-                      <p className="text-muted" style={{ marginTop: '0.25rem' }}>{ex.message}</p>
+                      <h3>{isSender ? `You → ${otherUser?.name}` : `${otherUser?.name} → You`}</h3>
+                      <p className="text-muted" style={{ marginTop: '0.25rem' }}>
+                        {ex.skillOffered} ↔ {ex.skillWanted}
+                      </p>
+                      <p className="text-muted" style={{ fontSize: '0.85rem' }}>{ex.message}</p>
                     </div>
                     <span className={`badge ${getStatusBadge(ex.status)}`}>
                       {ex.status}
@@ -80,13 +84,13 @@ function Exchanges() {
                   </div>
 
                   <div style={{ marginTop: '1rem', display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                    {!isRequester && ex.status === 'pending' && (
+                    {!isSender && ex.status === 'pending' && (
                       <>
                         <button className="btn btn-success btn-sm" onClick={() => updateStatus(ex._id, 'accepted')}>
                           Accept
                         </button>
-                        <button className="btn btn-danger btn-sm" onClick={() => updateStatus(ex._id, 'rejected')}>
-                          Reject
+                        <button className="btn btn-danger btn-sm" onClick={() => updateStatus(ex._id, 'declined')}>
+                          Decline
                         </button>
                       </>
                     )}
