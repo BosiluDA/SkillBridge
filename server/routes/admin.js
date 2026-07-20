@@ -5,7 +5,6 @@ const Review    = require('../models/Review');
 const { protect, adminOnly } = require('../middleware/auth');
 const router    = express.Router();
 
-// All admin routes require auth + admin flag
 router.use(protect, adminOnly);
 
 // GET /api/admin/stats
@@ -44,7 +43,7 @@ router.get('/exchanges', async (req, res) => {
     const { status, limit = 50 } = req.query;
     const filter = status ? { status } : {};
     const exchanges = await Exchange.find(filter)
-      .populate('requester receiver', 'name email assignedGroup')
+      .populate('sender receiver', 'name email assignedGroup')
       .sort({ createdAt: -1 })
       .limit(Number(limit));
     res.json({ success: true, count: exchanges.length, exchanges });
@@ -67,20 +66,22 @@ router.get('/users', async (req, res) => {
 router.get('/export', async (req, res) => {
   try {
     const exchanges = await Exchange.find({ status: 'completed' })
-      .populate('requester receiver', 'name email assignedGroup simpleScore weightedScore');
+      .populate('sender receiver', 'name email assignedGroup simpleScore weightedScore');
 
     const rows = exchanges.map(e => ({
-      exchangeId:       e._id,
-      requesterName:    e.requester?.name,
-      requesterEmail:   e.requester?.email,
-      requesterGroup:   e.requester?.assignedGroup,
-      receiverName:     e.receiver?.name,
-      receiverEmail:    e.receiver?.email,
-      receiverGroup:    e.receiver?.assignedGroup,
-      message:          e.message,
-      status:           e.status,
-      createdAt:        e.createdAt,
-      completedAt:      e.completedAt
+      exchangeId:     e._id,
+      senderName:     e.sender?.name,
+      senderEmail:    e.sender?.email,
+      senderGroup:    e.sender?.assignedGroup,
+      receiverName:   e.receiver?.name,
+      receiverEmail:  e.receiver?.email,
+      receiverGroup:  e.receiver?.assignedGroup,
+      skillWanted:    e.skillWanted,
+      skillOffered:   e.skillOffered,
+      message:        e.message,
+      status:         e.status,
+      createdAt:      e.createdAt,
+      completedAt:    e.completedAt
     }));
 
     res.json({ success: true, count: rows.length, data: rows });

@@ -88,14 +88,12 @@ function Admin() {
 
         {error && <div className="error">{error}</div>}
 
-        {/* Tabs */}
         <div style={{ borderBottom: '1px solid var(--border)', marginBottom: '1.5rem', display: 'flex', gap: '0.5rem' }}>
           <button style={tabStyle('overview')} onClick={() => setActiveTab('overview')}>Overview</button>
           <button style={tabStyle('users')} onClick={() => setActiveTab('users')}>Users</button>
           <button style={tabStyle('exchanges')} onClick={() => setActiveTab('exchanges')}>Exchanges</button>
         </div>
 
-        {/* Overview Tab */}
         {activeTab === 'overview' && stats && (
           <>
             <div className="grid-3">
@@ -132,10 +130,10 @@ function Admin() {
               <div className="card">
                 <h3 className="mb-1">Exchange Status</h3>
                 <div style={{ marginTop: '1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                  {['pending', 'accepted', 'completed', 'rejected'].map(status => (
+                  {['pending', 'accepted', 'completed', 'declined'].map(status => (
                     <div key={status} className="flex-between">
                       <span style={{ textTransform: 'capitalize' }}>{status}</span>
-                      <span className={`badge badge-${status === 'accepted' || status === 'completed' ? 'success' : status === 'rejected' ? 'danger' : 'primary'}`}>
+                      <span className={`badge ${status === 'accepted' || status === 'completed' ? 'badge-success' : status === 'declined' ? 'badge-danger' : 'badge-primary'}`}>
                         {exchanges.filter(e => e.status === status).length}
                       </span>
                     </div>
@@ -146,7 +144,6 @@ function Admin() {
           </>
         )}
 
-        {/* Users Tab */}
         {activeTab === 'users' && (
           <div className="card">
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
@@ -174,9 +171,7 @@ function Admin() {
                     <td style={{ padding: '0.75rem', textAlign: 'center' }}>{u.simpleScore || 0}</td>
                     <td style={{ padding: '0.75rem', textAlign: 'center' }}>{u.weightedScore || 0}</td>
                     <td style={{ padding: '0.75rem', textAlign: 'center' }}>{u.totalExchanges || 0}</td>
-                    <td style={{ padding: '0.75rem', textAlign: 'center' }}>
-                      {u.isAdmin ? '✅' : '—'}
-                    </td>
+                    <td style={{ padding: '0.75rem', textAlign: 'center' }}>{u.isAdmin ? '✅' : '—'}</td>
                   </tr>
                 ))}
               </tbody>
@@ -184,15 +179,15 @@ function Admin() {
           </div>
         )}
 
-        {/* Exchanges Tab */}
         {activeTab === 'exchanges' && (
           <div className="card">
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
                 <tr style={{ borderBottom: '2px solid var(--border)' }}>
-                  <th style={{ padding: '0.75rem', textAlign: 'left' }}>Requester</th>
+                  <th style={{ padding: '0.75rem', textAlign: 'left' }}>Sender</th>
                   <th style={{ padding: '0.75rem', textAlign: 'left' }}>Receiver</th>
-                  <th style={{ padding: '0.75rem', textAlign: 'left' }}>Message</th>
+                  <th style={{ padding: '0.75rem', textAlign: 'left' }}>Skill Wanted</th>
+                  <th style={{ padding: '0.75rem', textAlign: 'left' }}>Skill Offered</th>
                   <th style={{ padding: '0.75rem', textAlign: 'center' }}>Status</th>
                   <th style={{ padding: '0.75rem', textAlign: 'center' }}>Date</th>
                 </tr>
@@ -200,13 +195,12 @@ function Admin() {
               <tbody>
                 {exchanges.map(ex => (
                   <tr key={ex._id} style={{ borderBottom: '1px solid var(--border)' }}>
-                    <td style={{ padding: '0.75rem' }}>{ex.requester?.name || 'N/A'}</td>
+                    <td style={{ padding: '0.75rem' }}>{ex.sender?.name || 'N/A'}</td>
                     <td style={{ padding: '0.75rem' }}>{ex.receiver?.name || 'N/A'}</td>
-                    <td style={{ padding: '0.75rem', color: 'var(--muted)', fontSize: '0.9rem', maxWidth: '200px' }}>
-                      {ex.message?.substring(0, 50)}...
-                    </td>
+                    <td style={{ padding: '0.75rem', color: 'var(--muted)', fontSize: '0.9rem' }}>{ex.skillWanted || '—'}</td>
+                    <td style={{ padding: '0.75rem', color: 'var(--muted)', fontSize: '0.9rem' }}>{ex.skillOffered || '—'}</td>
                     <td style={{ padding: '0.75rem', textAlign: 'center' }}>
-                      <span className={`badge badge-${ex.status === 'accepted' || ex.status === 'completed' ? 'success' : ex.status === 'rejected' ? 'danger' : 'primary'}`}>
+                      <span className={`badge ${ex.status === 'accepted' || ex.status === 'completed' ? 'badge-success' : ex.status === 'declined' ? 'badge-danger' : 'badge-primary'}`}>
                         {ex.status}
                       </span>
                     </td>
