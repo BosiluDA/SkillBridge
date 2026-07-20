@@ -8,7 +8,7 @@ function Browse() {
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState(null);
-  const [requestMsg, setRequestMsg] = useState('');
+  const [requestForm, setRequestForm] = useState({ skillWanted: '', skillOffered: '', message: '' });
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
   const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
@@ -34,17 +34,28 @@ function Browse() {
     fetchUsers(e.target.value);
   };
 
-  const sendRequest = async (toUser) => {
+  const openModal = (user) => {
+    setSelected(user);
+    setRequestForm({ skillWanted: '', skillOffered: '', message: '' });
     setError('');
     setSuccess('');
+  };
+
+  const sendRequest = async () => {
+    if (!requestForm.skillWanted || !requestForm.skillOffered) {
+      setError('Please fill in both skill fields');
+      return;
+    }
+    setError('');
     try {
       await API.post('/exchanges', {
-        receiver: toUser._id,
-        message: requestMsg || `Hi ${toUser.name}, I'd love to exchange skills with you!`
+        receiverId: selected._id,
+        skillWanted: requestForm.skillWanted,
+        skillOffered: requestForm.skillOffered,
+        message: requestForm.message || `Hi ${selected.name}, I'd love to exchange skills with you!`
       });
-      setSuccess(`Exchange request sent to ${toUser.name}!`);
+      setSuccess(`Exchange request sent to ${selected.name}!`);
       setSelected(null);
-      setRequestMsg('');
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to send request');
     }
@@ -58,7 +69,6 @@ function Browse() {
         <p className="text-muted">Find people to exchange skills with</p>
 
         {success && <div className="success-msg mt-1">{success}</div>}
-        {error && <div className="error mt-1">{error}</div>}
 
         <div className="card mt-2">
           <input
@@ -81,7 +91,7 @@ function Browse() {
                 <div className="flex-between mb-1">
                   <h3>{u.name}</h3>
                   <span className="badge badge-primary">
-                    {u.trustScore ? u.trustScore.toFixed(1) : '0'} ⭐
+                    {u.simpleScore ? u.simpleScore.toFixed(1) : '0'} ⭐
                   </span>
                 </div>
                 <p className="text-muted" style={{ marginBottom: '0.75rem' }}>
@@ -108,7 +118,7 @@ function Browse() {
                   </div>
                 )}
                 <button className="btn btn-primary btn-sm" style={{ width: '100%' }}
-                  onClick={() => setSelected(u)}>
+                  onClick={() => openModal(u)}>
                   Request Exchange
                 </button>
               </div>
@@ -124,15 +134,38 @@ function Browse() {
           }}>
             <div className="card" style={{ width: '480px', margin: 0 }}>
               <h3 className="mb-1">Request Exchange with {selected.name}</h3>
+
+              {error && <div className="error">{error}</div>}
+
+              <div className="form-group">
+                <label>Skill you want to learn from them *</label>
+                <input
+                  type="text"
+                  placeholder={`e.g. ${selected.skillsOffered?.[0] || 'Python'}`}
+                  value={requestForm.skillWanted}
+                  onChange={e => setRequestForm({ ...requestForm, skillWanted: e.target.value })}
+                />
+              </div>
+              <div className="form-group">
+                <label>Skill you will offer in return *</label>
+                <input
+                  type="text"
+                  placeholder={`e.g. ${currentUser.skillsOffered?.[0] || 'Guitar'}`}
+                  value={requestForm.skillOffered}
+                  onChange={e => setRequestForm({ ...requestForm, skillOffered: e.target.value })}
+                />
+              </div>
               <div className="form-group">
                 <label>Message (optional)</label>
-                <textarea rows="3" value={requestMsg} onChange={e => setRequestMsg(e.target.value)}
+                <textarea rows="3"
+                  value={requestForm.message}
+                  onChange={e => setRequestForm({ ...requestForm, message: e.target.value })}
                   placeholder={`Hi ${selected.name}, I'd love to exchange skills with you!`}
                   style={{ width: '100%', padding: '0.75rem', border: '2px solid var(--border)', borderRadius: '8px', fontFamily: 'inherit' }}
                 />
               </div>
               <div style={{ display: 'flex', gap: '1rem' }}>
-                <button className="btn btn-primary" style={{ flex: 1 }} onClick={() => sendRequest(selected)}>
+                <button className="btn btn-primary" style={{ flex: 1 }} onClick={sendRequest}>
                   Send Request
                 </button>
                 <button className="btn btn-secondary" style={{ flex: 1 }} onClick={() => setSelected(null)}>
