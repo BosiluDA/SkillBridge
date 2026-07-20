@@ -49,8 +49,8 @@ function Messages() {
     if (!newMsg.trim()) return;
     try {
       await API.post('/messages', {
-        exchange: selectedExchange._id,
-        content: newMsg
+        exchangeId: selectedExchange._id,
+        text: newMsg
       });
       setNewMsg('');
       const res = await API.get(`/messages/${selectedExchange._id}`);
@@ -115,7 +115,7 @@ function Messages() {
                           borderRadius: '12px',
                           maxWidth: '70%'
                         }}>
-                          {msg.content}
+                          {msg.text}
                         </div>
                       );
                     })
