@@ -22,7 +22,8 @@ function Browse() {
     try {
       const url = q ? `/users?search=${q}` : '/users';
       const res = await API.get(url);
-      setUsers(res.data.filter(u => u._id !== currentUser._id));
+      const data = Array.isArray(res.data) ? res.data : (res.data.users || []);
+      setUsers(data.filter(u => u._id !== currentUser._id));
     } catch (err) {
     } finally {
       setLoading(false);
@@ -116,7 +117,6 @@ function Browse() {
           </div>
         )}
 
-        {/* Request Modal */}
         {selected && (
           <div style={{
             position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
