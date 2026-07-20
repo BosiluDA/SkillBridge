@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState, useCallback } from 'react';
 import API from '../api/axios';
 import Navbar from '../components/Navbar';
 import '../App.css';
@@ -12,12 +11,9 @@ function Browse() {
   const [requestMsg, setRequestMsg] = useState('');
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
-  const navigate = useNavigate();
   const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
 
-  useEffect(() => { fetchUsers(); }, []);
-
-  const fetchUsers = async (q = '') => {
+  const fetchUsers = useCallback(async (q = '') => {
     setLoading(true);
     try {
       const url = q ? `/users?search=${q}` : '/users';
@@ -28,7 +24,10 @@ function Browse() {
     } finally {
       setLoading(false);
     }
-  };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => { fetchUsers(); }, [fetchUsers]);
 
   const handleSearch = (e) => {
     setSearch(e.target.value);

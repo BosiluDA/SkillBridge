@@ -15,6 +15,7 @@ function Messages() {
 
   useEffect(() => {
     fetchExchanges();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -24,7 +25,8 @@ function Messages() {
       const ex = exchanges.find(e => e._id === exchangeId);
       if (ex) selectExchange(ex);
     }
-  }, [exchanges]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [exchanges, location.search]);
 
   const fetchExchanges = async () => {
     try {
