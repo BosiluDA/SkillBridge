@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import API from '../api/axios';
 import Navbar from '../components/Navbar';
 import '../App.css';
@@ -11,6 +12,7 @@ function Browse() {
   const [requestForm, setRequestForm] = useState({ skillWanted: '', skillOffered: '', message: '' });
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
+  const navigate = useNavigate();
   const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
 
   const fetchUsers = useCallback(async (q = '') => {
@@ -89,7 +91,13 @@ function Browse() {
             {users.map(u => (
               <div key={u._id} className="card">
                 <div className="flex-between mb-1">
-                  <h3>{u.name}</h3>
+                  <h3
+                    className="link"
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => navigate(`/profile/${u._id}`)}
+                  >
+                    {u.name}
+                  </h3>
                   <span className="badge badge-primary">
                     {u.simpleScore ? u.simpleScore.toFixed(1) : '0'} ⭐
                   </span>
