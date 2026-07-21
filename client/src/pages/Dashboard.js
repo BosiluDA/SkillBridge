@@ -6,24 +6,41 @@ import '../App.css';
 
 function Dashboard() {
   const [user, setUser] = useState(null);
-  const [stats, setStats] = useState({ exchanges: 0 });
+  const [exchanges, setExchanges] = useState([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const stored = JSON.parse(localStorage.getItem('user') || '{}');
-    setUser(stored);
-    fetchStats();
+    fetchData();
   }, []);
 
-  const fetchStats = async () => {
+  const fetchData = async () => {
     try {
-      const res = await API.get('/exchanges');
-      const data = Array.isArray(res.data) ? res.data : [];
-      setStats(prev => ({ ...prev, exchanges: data.length }));
-    } catch (err) {}
+      const [userRes, exchangeRes] = await Promise.all([
+        API.get('/auth/me'),
+        API.get('/exchanges')
+      ]);
+      const userData = userRes.data.user || userRes.data;
+      const exchangeData = Array.isArray(exchangeRes.data) ? exchangeRes.data : (exchangeRes.data.exchanges || []);
+      setUser(userData);
+      setExchanges(exchangeData);
+      localStorage.setItem('user', JSON.stringify(userData));
+    } catch (err) {
+    } finally {
+      setLoading(false);
+    }
   };
 
+  if (loading) return (
+    <div className="page-wrapper">
+      <Navbar />
+      <div className="page-content"><p className="text-muted">Loading...</p></div>
+    </div>
+  );
+
   if (!user) return null;
+
+  const completed = exchanges.filter(e => e.status === 'completed').length;
 
   return (
     <div className="page-wrapper">
@@ -34,20 +51,20 @@ function Dashboard() {
 
         <div className="grid-3 mt-2">
           <div className="card text-center">
-            <h2 style={{ fontSize: '2.5rem', color: 'var(--primary)' }}>{stats.exchanges}</h2>
+            <h2 style={{ fontSize: '2.5rem', color: 'var(--primary)' }}>{exchanges.length}</h2>
             <p className="text-muted">Total Exchanges</p>
           </div>
           <div className="card text-center">
-            <h2 style={{ fontSize: '2.5rem', color: 'var(--accent)' }}>
-              {user.trustScore ? user.trustScore.toFixed(1) : 'N/A'}
-            </h2>
-            <p className="text-muted">Trust Score</p>
+            <h2 style={{ fontSize: '2.5rem', color: 'var(--success)' }}>{completed}</h2>
+            <p className="text-muted">Completed</p>
           </div>
           <div className="card text-center">
-            <h2 style={{ fontSize: '2.5rem', color: 'var(--success)' }}>
-              {user.group === 'A' ? '⭐ Simple' : '📊 Weighted'}
+            <h2 style={{ fontSize: '2.5rem', color: 'var(--accent)' }}>
+              {user.assignedGroup === 'A'
+                ? (user.simpleScore || 0).toFixed(1)
+                : (user.weightedScore || 0).toFixed(1)}
             </h2>
-            <p className="text-muted">Group {user.group}</p>
+            <p className="text-muted">Trust Score (Group {user.assignedGroup})</p>
           </div>
         </div>
 
