@@ -10,6 +10,7 @@ import Exchanges from './pages/Exchanges';
 import Messages from './pages/Messages';
 import Rating from './pages/Rating';
 import Admin from './pages/Admin';
+import ViewProfile from './pages/ViewProfile';
 
 const PrivateRoute = ({ children }) => {
   const token = localStorage.getItem('token');
@@ -25,6 +26,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
         <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
+        <Route path="/profile/:id" element={<PrivateRoute><ViewProfile /></PrivateRoute>} />
         <Route path="/browse" element={<PrivateRoute><Browse /></PrivateRoute>} />
         <Route path="/exchanges" element={<PrivateRoute><Exchanges /></PrivateRoute>} />
         <Route path="/messages" element={<PrivateRoute><Messages /></PrivateRoute>} />
