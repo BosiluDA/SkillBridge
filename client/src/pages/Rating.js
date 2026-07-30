@@ -16,7 +16,6 @@ function Rating() {
 
   const params = new URLSearchParams(location.search);
   const exchangeId = params.get('exchangeId');
-  const userId = params.get('userId');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -25,8 +24,7 @@ function Rating() {
     setError('');
     try {
       await API.post('/reviews', {
-        reviewee: userId,
-        exchange: exchangeId,
+        exchangeId,
         rating,
         comment
       });
