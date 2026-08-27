@@ -12,7 +12,7 @@ Supervisor      : Mrs. Dilushini Fernando
 University      : University of Bedfordshire
 Course          : BSc (Hons) Software Engineering
 
-Live URL        : https://skill-bridge-c8e8wsuvq-ac-me6.vercel.app/
+Live URL        : https://skill-bridge-six-drab.vercel.app/login
 Backend API     : https://skillbridge-618z.onrender.com/api
 GitHub Repo     : https://github.com/BosiluDA/SkillBridge
 
