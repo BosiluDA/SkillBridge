@@ -1,6 +1,6 @@
-========================================
+
         SKILLBRIDGE - README
-========================================
+
 
 Project Title   : SkillBridge - A Comparative Study of Simple and 
                   Weighted Trust Scoring Systems in Peer Skill 
@@ -152,6 +152,4 @@ NOTES
 - The .env file is excluded. You must create your own to 
   run the project locally.
 
-========================================
-        END OF README
-========================================
+
