@@ -12,7 +12,7 @@ Supervisor      : Mrs. Dilushini Fernando
 University      : University of Bedfordshire
 Course          : BSc (Hons) Software Engineering
 
-Live URL        : https://skill-bridge-six-drab.vercel.app
+Live URL        : https://skill-bridge-c8e8wsuvq-ac-me6.vercel.app/
 Backend API     : https://skillbridge-618z.onrender.com/api
 GitHub Repo     : https://github.com/BosiluDA/SkillBridge
 
@@ -42,51 +42,6 @@ Auth      : JWT (JSON Web Tokens) + bcryptjs
 Hosting   : Vercel (frontend), Render.com (backend)
 Tools     : Postman, GitHub Desktop, Power BI
 
-----------------------------------------
-FOLDER STRUCTURE
-----------------------------------------
-
-SkillBridge/
-├── client/                  React frontend
-│   ├── src/
-│   │   ├── api/
-│   │   │   └── axios.js     Axios instance + JWT interceptor
-│   │   ├── components/
-│   │   │   └── Navbar.js    Shared navigation bar
-│   │   ├── pages/
-│   │   │   ├── Login.js
-│   │   │   ├── Register.js
-│   │   │   ├── Dashboard.js
-│   │   │   ├── Browse.js
-│   │   │   ├── Exchanges.js
-│   │   │   ├── Messages.js
-│   │   │   ├── Profile.js
-│   │   │   ├── Rating.js
-│   │   │   ├── ViewProfile.js
-│   │   │   └── Admin.js
-│   │   ├── App.js           Routes and PrivateRoute
-│   │   └── App.css          Global styles + CSS variables
-│   └── package.json
-│
-└── server/                  Node.js backend
-    ├── models/
-    │   ├── User.js
-    │   ├── Exchange.js
-    │   ├── Review.js
-    │   └── Message.js
-    ├── routes/
-    │   ├── auth.js
-    │   ├── users.js
-    │   ├── exchanges.js
-    │   ├── reviews.js
-    │   ├── messages.js
-    │   └── admin.js
-    ├── middleware/
-    │   └── auth.js          JWT + admin middleware
-    ├── utils/
-    │   └── scoring.js       Trust scoring algorithms
-    ├── server.js
-    └── package.json
 
 ----------------------------------------
 HOW TO RUN LOCALLY
